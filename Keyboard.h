@@ -22,7 +22,7 @@ public:
 
     void align(const lv_obj_t* base, lv_align_t align, lv_coord_t x = 0, lv_coord_t y = 0);
 
-    static void __kb_event_cb(lv_obj_t* kb, lv_event_t event);
+
 
     void setKeyboardEvent(kb_event_cb cb);
 
@@ -32,7 +32,8 @@ public:
 
 private:
     lv_obj_t* _kbCont = nullptr;
-    kb_event_cb _cb = nullptr;
+    kb_event_cb _callback = nullptr;
+    static void __eventCallback(lv_obj_t* kb, lv_event_t event);
     static const char* btnm_mapplus[10][23];
     static Keyboard *_kb;
     static char __buf[128];

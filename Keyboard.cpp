@@ -51,7 +51,7 @@ void Keyboard::create(lv_obj_t* parent)
     lv_obj_add_style(kb, LV_OBJ_PART_MAIN, &kbStyle);
     lv_obj_add_style(ta, LV_OBJ_PART_MAIN, &kbStyle);
 
-    lv_obj_set_event_cb(kb, __kb_event_cb);
+    lv_obj_set_event_cb(kb, __eventCallback);
 
     _kb = this;
 }
@@ -61,7 +61,7 @@ void Keyboard::align(const lv_obj_t* base, lv_align_t align, lv_coord_t x, lv_co
     lv_obj_align(_kbCont, base, align, x, y);
 }
 
-void Keyboard::__kb_event_cb(lv_obj_t* kb, lv_event_t event)
+void Keyboard::__eventCallback(lv_obj_t* kb, lv_event_t event)
 {
     if (event != LV_EVENT_VALUE_CHANGED && event != LV_EVENT_LONG_PRESSED_REPEAT)
     {
@@ -77,13 +77,13 @@ void Keyboard::__kb_event_cb(lv_obj_t* kb, lv_event_t event)
     if (strcmp(txt, LV_SYMBOL_OK) == 0)
     {
         strcpy(__buf, lv_textarea_get_text(ext->ta));
-        if (_kb->_cb != nullptr) {
-            _kb->_cb(KB_EVENT_OK);
+        if (_kb->_callback != nullptr) {
+            _kb->_callback(KB_EVENT_OK);
         }
         return;
     } else if (strcmp(txt, "Exit") == 0) {
-        if (_kb->_cb != nullptr) {
-            _kb->_cb(KB_EVENT_EXIT);
+        if (_kb->_callback != nullptr) {
+            _kb->_callback(KB_EVENT_EXIT);
         }
         return;
     } else if (strcmp(txt, LV_SYMBOL_RIGHT) == 0) {
@@ -97,9 +97,9 @@ void Keyboard::__kb_event_cb(lv_obj_t* kb, lv_event_t event)
     }
 }
 
-void Keyboard::setKeyboardEvent(kb_event_cb cb)
+void Keyboard::setKeyboardEvent(kb_event_cb callback)
 {
-    _cb = cb;
+    _callback = callback;
 }
 
 const char* Keyboard::getText()
