@@ -86,7 +86,7 @@ MenuBar::lv_menu_config_t _cfg[7] = {
 };
 
 MenuBar menuBars;
-StatusBar bar;
+StatusBar statusBar;
 
 static void event_handler(lv_obj_t *obj, lv_event_t event)
 {
@@ -95,7 +95,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
             lv_obj_set_hidden(mainBar, true);
             if (menuBars.self() == nullptr) {
                 menuBars.createMenu(_cfg, sizeof(_cfg) / sizeof(_cfg[0]), view_event_handler);
-                lv_obj_align(menuBars.self(), bar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
+                lv_obj_align(menuBars.self(), statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
 
             } else {
                 menuBars.hidden(false);
@@ -125,8 +125,8 @@ void setupGui()
     lv_img_set_src(img_bin, images[r]);
     lv_obj_align(img_bin, NULL, LV_ALIGN_CENTER, 0, 0);
 
-    //! bar
-    bar.createIcons(scr);
+    //! Create & setup the status bar
+    statusBar.createIcons(scr);
     updateBatteryLevel();
     lv_icon_battery_t icon = LV_ICON_CALCULATION;
 
@@ -149,9 +149,9 @@ void setupGui()
 
 
     mainBar = lv_cont_create(scr, NULL);
-    lv_obj_set_size(mainBar,  LV_HOR_RES, LV_VER_RES - bar.height());
+    lv_obj_set_size(mainBar,  LV_HOR_RES, LV_VER_RES - statusBar.height());
     lv_obj_add_style(mainBar, LV_OBJ_PART_MAIN, &mainStyle);
-    lv_obj_align(mainBar, bar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
+    lv_obj_align(mainBar, statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
 
     //! Time
     static lv_style_t timeStyle;
@@ -188,7 +188,7 @@ void setupGui()
 
 void updateStepCounter(uint32_t counter)
 {
-    bar.setStepCounter(counter);
+    statusBar.setStepCounter(counter);
 }
 
 static void updateTime()
@@ -207,7 +207,7 @@ void updateBatteryLevel()
 {
     TTGOClass *ttgo = TTGOClass::getWatch();
     int p = ttgo->power->getBattPercentage();
-    bar.updateLevel(p);
+    statusBar.updateLevel(p);
 }
 
 void updateBatteryIcon(lv_icon_battery_t icon)
@@ -221,7 +221,7 @@ void updateBatteryIcon(lv_icon_battery_t icon)
         else if (level > 20)icon = LV_ICON_BAT_1;
         else icon = LV_ICON_BAT_EMPTY;
     }
-    bar.updateBatteryIcon(icon);
+    statusBar.updateBatteryIcon(icon);
 }
 
 
@@ -827,9 +827,9 @@ void wifi_connect_status(bool result)
         pl = nullptr;
     }
     if (result) {
-        bar.show(LV_STATUS_BAR_WIFI);
+        statusBar.show(LV_STATUS_BAR_WIFI);
     } else {
-        bar.hidden(LV_STATUS_BAR_WIFI);
+        statusBar.hidden(LV_STATUS_BAR_WIFI);
     }
     menuBars.hidden(false);
 }
@@ -922,14 +922,14 @@ void wifi_sw_event_cb(uint8_t index, bool en)
             WiFi.begin();
         } else {
             WiFi.disconnect();
-            bar.hidden(LV_STATUS_BAR_WIFI);
+            statusBar.hidden(LV_STATUS_BAR_WIFI);
         }
         break;
     case 1:
         sw->hidden();
         pl = new Preload;
         pl->create();
-        pl->align(bar.self(), LV_ALIGN_OUT_BOTTOM_MID);
+        pl->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
         WiFi.disconnect();
         WiFi.scanNetworks(true);
         break;
@@ -948,7 +948,7 @@ void wifi_sw_event_cb(uint8_t index, bool en)
             sw->hidden();
             pl = new Preload;
             pl->create();
-            pl->align(bar.self(), LV_ALIGN_OUT_BOTTOM_MID);
+            pl->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
         }
         break;
     default:
@@ -963,7 +963,7 @@ void wifi_list_cb(const char *txt)
     list = nullptr;
     kb = new Keyboard;
     kb->create();
-    kb->align(bar.self(), LV_ALIGN_OUT_BOTTOM_MID);
+    kb->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
     kb->setKeyboardEvent(wifi_kb_event_cb);
 }
 
@@ -973,7 +973,7 @@ void wifi_list_add(const char *ssid)
         pl->hidden();
         list = new List;
         list->create();
-        list->align(bar.self(), LV_ALIGN_OUT_BOTTOM_MID);
+        list->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
         list->setListCb(wifi_list_cb);
     }
     list->add(ssid);
@@ -989,7 +989,7 @@ static void wifi_event_cb()
         sw = nullptr;
         menuBars.hidden(false);
     });
-    sw->align(bar.self(), LV_ALIGN_OUT_BOTTOM_MID);
+    sw->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
     sw->setStatus(0, WiFi.isConnected());
 }
 
@@ -1087,7 +1087,7 @@ static void light_event_cb()
         menuBars.hidden(false);
     });
 
-    sw->align(bar.self(), LV_ALIGN_OUT_BOTTOM_MID);
+    sw->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
 
     //Initialize switch status
     for (int i = 0; i < cfg_count; i++) {
