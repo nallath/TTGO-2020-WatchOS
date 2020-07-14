@@ -17,7 +17,9 @@ Created by Lewis he on October 10, 2019.
 #include <Ticker.h>
 #include "FS.h"
 #include "SD.h"
+
 #include "StatusBar.h"
+#include "MessageBox.h"
 
 #define RTC_TIME_ZONE   "CST-8"
 
@@ -899,64 +901,6 @@ private:
     lv_task_cb_t _cb = nullptr;
 };
 
-/*****************************************************************
- *
- *          ! MesBox Class
- *
- */
-
-class MBox
-{
-public:
-    MBox()
-    {
-        _mbox = nullptr;
-    }
-    ~MBox()
-    {
-        if (_mbox == nullptr)return;
-        lv_obj_del(_mbox);
-        _mbox = nullptr;
-    }
-
-    void create(const char *text, lv_event_cb_t event_cb, const char **btns = nullptr, lv_obj_t *par = nullptr)
-    {
-        if (_mbox != nullptr)return;
-        lv_obj_t *p = par == nullptr ? lv_scr_act() : par;
-        _mbox = lv_msgbox_create(p, NULL);
-        lv_msgbox_set_text(_mbox, text);
-        if (btns == nullptr) {
-            static const char *defBtns[] = {"Ok", ""};
-            lv_msgbox_add_btns(_mbox, defBtns);
-        } else {
-            lv_msgbox_add_btns(_mbox, btns);
-        }
-        lv_obj_set_width(_mbox, LV_HOR_RES - 40);
-        lv_obj_set_event_cb(_mbox, event_cb);
-        lv_obj_align(_mbox, NULL, LV_ALIGN_CENTER, 0, 0);
-    }
-
-    void setData(void *data)
-    {
-        lv_obj_set_user_data(_mbox, data);
-    }
-
-    void *getData()
-    {
-        return lv_obj_get_user_data(_mbox);
-    }
-
-    void setBtn(const char **btns)
-    {
-        lv_msgbox_add_btns(_mbox, btns);
-    }
-
-private:
-    lv_obj_t *_mbox = nullptr;
-};
-
-
-
 
 /*****************************************************************
  *
@@ -969,7 +913,7 @@ static Preload *pl = nullptr;
 static List *list = nullptr;
 static Task *task = nullptr;
 static Ticker *gTicker = nullptr;
-static MBox *mbox = nullptr;
+static MessageBox *messageBox = nullptr;
 
 static char ssid[64], password[64];
 
@@ -1030,7 +974,7 @@ void wifi_kb_event_cb(Keyboard::kb_event_t event)
     }
 }
 
-static void wifi_sync_mbox_cb(lv_task_t *t)
+static void wifi_sync_messagebox_cb(lv_task_t *t)
 {
     static  struct tm timeinfo;
     bool ret = false;
@@ -1051,16 +995,16 @@ static void wifi_sync_mbox_cb(lv_task_t *t)
             delete task;
             task = nullptr;
 
-            //! mbox
+            //! messagebox
             static const char *btns[] = {"Ok", "Cancel", ""};
-            mbox = new MBox;
-            mbox->create(format, [](lv_obj_t *obj, lv_event_t event) {
+            messageBox = new MessageBox;
+            messageBox->create(format, [](lv_obj_t *obj, lv_event_t event) {
                 if (event == LV_EVENT_VALUE_CHANGED) {
                     const char *txt =  lv_msgbox_get_active_btn_text(obj);
                     if (!strcmp(txt, "Ok")) {
 
                         //!sync to rtc
-                        struct tm *info =  (struct tm *)mbox->getData();
+                        struct tm *info =  (struct tm *)messageBox->getData();
                         Serial.printf("read use data = %d:%d:%d - %d:%d:%d \n", info->tm_year + 1900, info->tm_mon + 1, info->tm_mday, info->tm_hour, info->tm_min, info->tm_sec);
 
                         TTGOClass *ttgo = TTGOClass::getWatch();
@@ -1069,13 +1013,13 @@ static void wifi_sync_mbox_cb(lv_task_t *t)
                         //!cancel
                         // Serial.println("Cancel press");
                     }
-                    delete mbox;
-                    mbox = nullptr;
+                    delete messageBox;
+                    messageBox = nullptr;
                     sw->hidden(false);
                 }
             });
-            mbox->setBtn(btns);
-            mbox->setData(&timeinfo);
+            messageBox->setBtn(btns);
+            messageBox->setData(&timeinfo);
             return;
         }
     }
@@ -1114,7 +1058,7 @@ void wifi_sw_event_cb(uint8_t index, bool en)
                 return;
             }
             task = new Task;
-            task->create(wifi_sync_mbox_cb);
+            task->create(wifi_sync_messagebox_cb);
             sw->hidden();
             pl = new Preload;
             pl->create();
@@ -1268,24 +1212,24 @@ static void light_event_cb()
 
 /*****************************************************************
  *
- *          ! MBOX EVENT
+ *          ! MessageBox EVENT
  *
  */
-static lv_obj_t *mbox1 = nullptr;
+static lv_obj_t *messagebox1 = nullptr;
 
-static void create_mbox(const char *txt, lv_event_cb_t event_cb)
+static void create_messagebox(const char *txt, lv_event_cb_t event_cb)
 {
-    if (mbox1 != nullptr)return;
+    if (messagebox1 != nullptr)return;
     static const char *btns[] = {"Ok", ""};
-    mbox1 = lv_msgbox_create(lv_scr_act(), NULL);
-    lv_msgbox_set_text(mbox1, txt);
-    lv_msgbox_add_btns(mbox1, btns);
-    lv_obj_set_width(mbox1, LV_HOR_RES - 40);
-    lv_obj_set_event_cb(mbox1, event_cb);
-    lv_obj_align(mbox1, NULL, LV_ALIGN_CENTER, 0, 0);
+    messagebox1 = lv_msgbox_create(lv_scr_act(), NULL);
+    lv_msgbox_set_text(messagebox1, txt);
+    lv_msgbox_add_btns(messagebox1, btns);
+    lv_obj_set_width(messagebox1, LV_HOR_RES - 40);
+    lv_obj_set_event_cb(messagebox1, event_cb);
+    lv_obj_align(messagebox1, NULL, LV_ALIGN_CENTER, 0, 0);
 }
 
-static void destory_mbox()
+static void destory_messagebox()
 {
     if (pl != nullptr) {
         delete pl;
@@ -1295,9 +1239,9 @@ static void destory_mbox()
         delete list;
         list = nullptr;
     }
-    if (mbox1 != nullptr) {
-        lv_obj_del(mbox1);
-        mbox1 = nullptr;
+    if (messagebox1 != nullptr) {
+        lv_obj_del(messagebox1);
+        messagebox1 = nullptr;
     }
 }
 
