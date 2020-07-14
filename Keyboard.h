@@ -22,8 +22,6 @@ public:
 
     void align(const lv_obj_t* base, lv_align_t align, lv_coord_t x = 0, lv_coord_t y = 0);
 
-
-
     void setKeyboardEvent(kb_event_cb cb);
 
     const char* getText();

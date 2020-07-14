@@ -8,7 +8,9 @@ Keyboard::Keyboard()
 Keyboard::~Keyboard()
 {
     if (_kbCont)
+    {
         lv_obj_del(_kbCont);
+    }
     _kbCont = nullptr;
 }
 
@@ -24,7 +26,8 @@ void Keyboard::create(lv_obj_t* parent)
     lv_style_set_text_color(&kbStyle, LV_OBJ_PART_MAIN, LV_COLOR_WHITE);
     lv_style_set_image_recolor(&kbStyle, LV_OBJ_PART_MAIN, LV_COLOR_WHITE);
 
-    if (parent == nullptr) {
+    if (parent == nullptr)
+    {
         parent = lv_scr_act();
     }
 
@@ -73,26 +76,33 @@ void Keyboard::__eventCallback(lv_obj_t* kb, lv_event_t event)
     {
         return;
     }
+
     static int index = 0;
     if (strcmp(txt, LV_SYMBOL_OK) == 0)
     {
         strcpy(__buf, lv_textarea_get_text(ext->ta));
-        if (_kb->_callback != nullptr) {
+        if (_kb->_callback != nullptr)
+        {
             _kb->_callback(KB_EVENT_OK);
         }
         return;
-    } else if (strcmp(txt, "Exit") == 0) {
-        if (_kb->_callback != nullptr) {
+    } else if (strcmp(txt, "Exit") == 0)
+    {
+        if (_kb->_callback != nullptr)
+        {
             _kb->_callback(KB_EVENT_EXIT);
         }
         return;
-    } else if (strcmp(txt, LV_SYMBOL_RIGHT) == 0) {
+    } else if (strcmp(txt, LV_SYMBOL_RIGHT) == 0)
+    {
         index = index + 1 >= sizeof(btnm_mapplus) / sizeof(btnm_mapplus[0]) ? 0 : index + 1;
         lv_keyboard_set_map(kb, LV_KEYBOARD_MODE_TEXT_LOWER, btnm_mapplus[index]);
         return;
-    } else if (strcmp(txt, "Del") == 0) {
+    } else if (strcmp(txt, "Del") == 0)
+    {
         lv_textarea_del_char(ext->ta);
-    } else {
+    } else
+    {
         lv_textarea_add_text(ext->ta, txt);
     }
 }
