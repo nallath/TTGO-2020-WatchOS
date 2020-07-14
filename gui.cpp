@@ -85,7 +85,7 @@ MenuBar::lv_menu_config_t _cfg[7] = {
     {.name = "Camera",  .img = (void *) &CAMERA_PNG, /*.event_cb = camera_event_cb*/ }
 };
 
-MenuBar menuBars;
+MenuBar menuBar;
 StatusBar statusBar;
 
 static void event_handler(lv_obj_t *obj, lv_event_t event)
@@ -93,12 +93,12 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_SHORT_CLICKED) {  //!  Event callback Is in here
         if (obj == menuBtn) {
             lv_obj_set_hidden(mainBar, true);
-            if (menuBars.self() == nullptr) {
-                menuBars.createMenu(_cfg, sizeof(_cfg) / sizeof(_cfg[0]), view_event_handler);
-                lv_obj_align(menuBars.self(), statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
+            if (menuBar.self() == nullptr) {
+                menuBar.createMenu(_cfg, sizeof(_cfg) / sizeof(_cfg[0]), view_event_handler);
+                lv_obj_align(menuBar.self(), statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
 
             } else {
-                menuBars.hidden(false);
+                menuBar.hidden(false);
             }
         }
     }
@@ -239,15 +239,15 @@ static void view_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     int size = sizeof(_cfg) / sizeof(_cfg[0]);
     if (event == LV_EVENT_SHORT_CLICKED) {
-        if (obj == menuBars.exitBtn()) {
-            menuBars.hidden();
+        if (obj == menuBar.exitBtn()) {
+            menuBar.hidden();
             lv_obj_set_hidden(mainBar, false);
             return;
         }
         for (int i = 0; i < size; i++) {
-            if (obj == menuBars.obj(i)) {
+            if (obj == menuBar.obj(i)) {
                 if (_cfg[i].event_cb != nullptr) {
-                    menuBars.hidden();
+                    menuBar.hidden();
                     _cfg[i].event_cb();
                 }
                 return;
@@ -831,7 +831,7 @@ void wifi_connect_status(bool result)
     } else {
         statusBar.hidden(LV_STATUS_BAR_WIFI);
     }
-    menuBars.hidden(false);
+    menuBar.hidden(false);
 }
 
 
@@ -856,7 +856,7 @@ void wifi_kb_event_cb(Keyboard::kb_event_t event)
         pl = nullptr;
         kb = nullptr;
         sw = nullptr;
-        menuBars.hidden(false);
+        menuBar.hidden(false);
     }
 }
 
@@ -987,7 +987,7 @@ static void wifi_event_cb()
     sw->create(cfg, 3, []() {
         delete sw;
         sw = nullptr;
-        menuBars.hidden(false);
+        menuBar.hidden(false);
     });
     sw->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
     sw->setStatus(0, WiFi.isConnected());
@@ -1000,7 +1000,7 @@ static void wifi_destory()
     switch (globalIndex) {
     //! wifi management main
     case 0:
-        menuBars.hidden(false);
+        menuBar.hidden(false);
         delete sw;
         sw = nullptr;
         break;
@@ -1084,7 +1084,7 @@ static void light_event_cb()
     sw->create(cfg, cfg_count, []() {
         delete sw;
         sw = nullptr;
-        menuBars.hidden(false);
+        menuBar.hidden(false);
     });
 
     sw->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
