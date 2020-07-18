@@ -20,14 +20,13 @@ public:
     void setKeyboardEvent(kb_event_cb cb);
 
     const char* getText();
-
+    void eventCallback(lv_obj_t* kb, lv_event_t event);
 private:
     lv_obj_t* _kbCont = nullptr;
     kb_event_cb _callback = nullptr;
-    static void __eventCallback(lv_obj_t* kb, lv_event_t event);
     static const char* btnm_mapplus[10][23];
-    static Keyboard *_kb;
-    static char __buf[128];
+
+    char __buf[128];
 };
 
 #endif /*__KEYBOARD_H */

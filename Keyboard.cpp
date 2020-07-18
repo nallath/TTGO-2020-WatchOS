@@ -1,6 +1,5 @@
 #include "Keyboard.h"
-char Keyboard::__buf[128];
-Keyboard *Keyboard::_kb = nullptr;
+
 const char *Keyboard::btnm_mapplus[10][23] = {
     {
         "a", "b", "c",   "\n",
@@ -106,10 +105,10 @@ void Keyboard::create(lv_obj_t* parent)
 
     lv_obj_set_event_cb(kb, __eventCallback);
 
-    _kb = this;
+    bindEventCallback(kb, &Keyboard::eventCallback);
 }
 
-void Keyboard::__eventCallback(lv_obj_t* kb, lv_event_t event)
+void Keyboard::eventCallback(lv_obj_t* kb, lv_event_t event)
 {
     if (event != LV_EVENT_VALUE_CHANGED && event != LV_EVENT_LONG_PRESSED_REPEAT)
     {
@@ -126,16 +125,16 @@ void Keyboard::__eventCallback(lv_obj_t* kb, lv_event_t event)
     if (strcmp(txt, LV_SYMBOL_OK) == 0)
     {
         strcpy(__buf, lv_textarea_get_text(ext->ta));
-        if (_kb->_callback != nullptr)
+        if (this->_callback != nullptr)
         {
-            _kb->_callback(KB_EVENT_OK);
+            this->_callback(KB_EVENT_OK);
         }
         return;
     } else if (strcmp(txt, "Exit") == 0)
     {
-        if (_kb->_callback != nullptr)
+        if (this->_callback != nullptr)
         {
-            _kb->_callback(KB_EVENT_EXIT);
+            this->_callback(KB_EVENT_EXIT);
         }
         return;
     } else if (strcmp(txt, LV_SYMBOL_RIGHT) == 0)
