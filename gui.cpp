@@ -478,7 +478,7 @@ void wifi_sw_event_cb(uint8_t index, bool en)
     case 2:
         if (!WiFi.isConnected()) {
             //TODO pop-up window
-            Serial.println("WiFi is no connect");
+            Serial.println("WiFi is not connected");
             return;
         } else {
             if (task != nullptr) {
