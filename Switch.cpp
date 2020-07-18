@@ -1,5 +1,7 @@
 #include "Switch.h"
 
+Switch *Switch::_switch = nullptr;
+
 void Switch::create(lv_obj_t* parent)
 {
     // TODO: ensure that a single switch can also be created.
@@ -64,7 +66,7 @@ void Switch::create(switch_cfg_t* cfg, uint8_t count, exit_cb cb, lv_obj_t* pare
     lv_imgbtn_set_src(_exitBtn, LV_BTN_STATE_CHECKED_PRESSED, &iexit);
     lv_obj_set_click(_exitBtn, true);
 
-    lv_obj_align(_exitBtn, _content, LV_ALIGN_IN_BOTTOM_MID, 0, -5);
+    lv_obj_align(_exitBtn, _content, LV_ALIGN_IN_BOTTOM_LEFT, 10, -10);
     lv_obj_set_event_cb(_exitBtn, __switch_event_cb);
 
     _switch = this;

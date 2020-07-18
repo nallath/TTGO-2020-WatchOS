@@ -98,10 +98,10 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_SHORT_CLICKED) {  //!  Event callback Is in here
         if (obj == menuBtn) {
             lv_obj_set_hidden(mainBar, true);
-            if (menuBar.self() == nullptr) {
+            if (menuBar.self() == nullptr)
+            {
                 menuBar.createMenu(_cfg, sizeof(_cfg) / sizeof(_cfg[0]), view_event_handler);
                 lv_obj_align(menuBar.self(), statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
-
             } else {
                 menuBar.setHidden(false);
             }
@@ -262,12 +262,9 @@ static void view_event_handler(lv_obj_t *obj, lv_event_t event)
 }
 
 
-char Keyboard::__buf[128];
-Keyboard *Keyboard::_kb = nullptr;
 
-Switch *Switch::_switch = nullptr;
 
-List *List::_list = nullptr;
+
 
 
 /*****************************************************************

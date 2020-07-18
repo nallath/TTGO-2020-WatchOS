@@ -1,5 +1,6 @@
 #include "Keyboard.h"
-
+char Keyboard::__buf[128];
+Keyboard *Keyboard::_kb = nullptr;
 const char *Keyboard::btnm_mapplus[10][23] = {
     {
         "a", "b", "c",   "\n",

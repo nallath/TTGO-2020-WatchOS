@@ -1,5 +1,7 @@
 #include "List.h"
 
+List *List::_list = nullptr;
+
 void List::create(lv_obj_t *parent)
 {
     if (parent == nullptr)
