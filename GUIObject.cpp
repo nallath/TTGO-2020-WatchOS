@@ -16,9 +16,9 @@ GUIObject::~GUIObject()
     _content = nullptr;
 }
 
-void GUIObject::hidden(bool en)
+void GUIObject::setHidden(bool hiddenState)
 {
-    lv_obj_set_hidden(_content, en);
+    lv_obj_set_hidden(_content, hiddenState);
 }
 
 void GUIObject::align(const lv_obj_t *base, lv_align_t align, lv_coord_t x, lv_coord_t y)

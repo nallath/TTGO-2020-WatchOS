@@ -44,7 +44,7 @@ public:
     void updateBatteryIcon(lv_icon_battery_t icon);
 
     void show(lv_icon_status_bar_t icon);
-    void hidden(lv_icon_status_bar_t icon);
+    void setIconHidden(lv_icon_status_bar_t icon);
 
     uint8_t height();
     lv_obj_t* self();

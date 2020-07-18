@@ -77,7 +77,7 @@ void StatusBar::show(lv_icon_status_bar_t icon)
     refresh();
 }
 
-void StatusBar::hidden(lv_icon_status_bar_t icon)
+void StatusBar::setIconHidden(lv_icon_status_bar_t icon)
 {
     lv_obj_set_hidden(_array[icon].icon, true);
     refresh();

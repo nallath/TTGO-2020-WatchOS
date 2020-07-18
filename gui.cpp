@@ -103,7 +103,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
                 lv_obj_align(menuBar.self(), statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
 
             } else {
-                menuBar.hidden(false);
+                menuBar.setHidden(false);
             }
         }
     }
@@ -245,14 +245,14 @@ static void view_event_handler(lv_obj_t *obj, lv_event_t event)
     int size = sizeof(_cfg) / sizeof(_cfg[0]);
     if (event == LV_EVENT_SHORT_CLICKED) {
         if (obj == menuBar.exitBtn()) {
-            menuBar.hidden();
+            menuBar.setHidden(true);
             lv_obj_set_hidden(mainBar, false);
             return;
         }
         for (int i = 0; i < size; i++) {
             if (obj == menuBar.obj(i)) {
                 if (_cfg[i].event_cb != nullptr) {
-                    menuBar.hidden();
+                    menuBar.setHidden(true);
                     _cfg[i].event_cb();
                 }
                 return;
@@ -375,18 +375,18 @@ void wifi_connect_status(bool result)
     if (result) {
         statusBar.show(LV_STATUS_BAR_WIFI);
     } else {
-        statusBar.hidden(LV_STATUS_BAR_WIFI);
+        statusBar.setIconHidden(LV_STATUS_BAR_WIFI);
     }
-    menuBar.hidden(false);
+    menuBar.setHidden(false);
 }
 
 void wifi_kb_event_cb(Keyboard::kb_event_t event)
 {
     if (event == 0) {
-        kb->hidden();
+        kb->setHidden(true);
         Serial.println(kb->getText());
         strlcpy(password, kb->getText(), sizeof(password));
-        pl->hidden(false);
+        pl->setHidden(false);
         WiFi.mode(WIFI_STA);
         WiFi.disconnect();
         WiFi.begin(ssid, password);
@@ -401,7 +401,7 @@ void wifi_kb_event_cb(Keyboard::kb_event_t event)
         pl = nullptr;
         kb = nullptr;
         sw = nullptr;
-        menuBar.hidden(false);
+        menuBar.setHidden(false);
     }
 }
 
@@ -446,7 +446,7 @@ static void wifi_sync_messagebox_cb(lv_task_t *t)
                     }
                     delete messageBox;
                     messageBox = nullptr;
-                    sw->hidden(false);
+                    sw->setHidden(false);
                 }
             });
             messageBox->setBtn(btns);
@@ -464,11 +464,11 @@ void wifi_sw_event_cb(uint8_t index, bool en)
             WiFi.begin();
         } else {
             WiFi.disconnect();
-            statusBar.hidden(LV_STATUS_BAR_WIFI);
+            statusBar.setIconHidden(LV_STATUS_BAR_WIFI);
         }
         break;
     case 1:
-        sw->hidden();
+        sw->setHidden(true);
         pl = new Preload;
         pl->create();
         pl->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
@@ -487,7 +487,7 @@ void wifi_sw_event_cb(uint8_t index, bool en)
             }
             task = new Task;
             task->create(wifi_sync_messagebox_cb);
-            sw->hidden();
+            sw->setHidden(true);
             pl = new Preload;
             pl->create();
             pl->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
@@ -512,7 +512,7 @@ void wifi_list_cb(const char *txt)
 void wifi_list_add(const char *ssid)
 {
     if (list == nullptr) {
-        pl->hidden();
+        pl->setHidden(true);
         list = new List;
         list->create();
         list->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
@@ -528,7 +528,7 @@ static void wifi_event_cb()
     sw->create(cfg, 3, []() {
         delete sw;
         sw = nullptr;
-        menuBar.hidden(false);
+        menuBar.setHidden(false);
     });
     sw->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);
     sw->setStatus(0, WiFi.isConnected());
@@ -541,7 +541,7 @@ static void wifi_destory()
     switch (globalIndex) {
     //! wifi management main
     case 0:
-        menuBar.hidden(false);
+        menuBar.setHidden(false);
         delete sw;
         sw = nullptr;
         break;
@@ -563,7 +563,7 @@ static void wifi_destory()
             delete pl;
             pl = nullptr;
         }
-        sw->hidden(false);
+        sw->setHidden(false);
         break;
     //! wifi keyboard
     case 2:
@@ -579,7 +579,7 @@ static void wifi_destory()
             delete pl;
             pl = nullptr;
         }
-        sw->hidden(false);
+        sw->setHidden(false);
         break;
     case 3:
         break;
@@ -625,7 +625,7 @@ static void light_event_cb()
     sw->create(cfg, cfg_count, []() {
         delete sw;
         sw = nullptr;
-        menuBar.hidden(false);
+        menuBar.setHidden(false);
     });
 
     sw->align(statusBar.self(), LV_ALIGN_OUT_BOTTOM_MID);

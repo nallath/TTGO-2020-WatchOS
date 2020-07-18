@@ -96,7 +96,7 @@ lv_obj_t* MenuBar::self() const
     return _cont;
 }
 
-void MenuBar::hidden(bool en)
+void MenuBar::setHidden(bool en)
 {
     lv_obj_set_hidden(_cont, en);
     lv_obj_set_hidden(_exit, en);

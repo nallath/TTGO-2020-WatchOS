@@ -20,7 +20,7 @@ public:
 
     lv_obj_t* self() const;
 
-    void hidden(bool en = true);
+    void setHidden(bool en);
 
     lv_obj_t *obj(int index) const;
 private:
