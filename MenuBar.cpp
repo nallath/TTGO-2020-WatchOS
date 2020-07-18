@@ -1,7 +1,6 @@
 #include "MenuBar.h"
 
-LV_IMG_DECLARE(menu);
-
+LV_IMG_DECLARE(iexit);
 MenuBar::MenuBar()
 {
     _cont = nullptr;
@@ -67,7 +66,6 @@ void MenuBar::createMenu(lv_menu_config_t* config, int count, lv_event_cb_t even
         lv_obj_t *label = lv_label_create(_obj[i], NULL);
         lv_label_set_text(label, config[i].name);
         lv_obj_align(label, img, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
-LV_IMG_DECLARE(menu);
 
         i == 0 ? lv_obj_align(_obj[i], NULL, LV_ALIGN_CENTER, 0, 0) : lv_obj_align(_obj[i], _obj[i - 1], direction ? LV_ALIGN_OUT_BOTTOM_MID : LV_ALIGN_OUT_RIGHT_MID, 0, 0);
 
@@ -77,11 +75,11 @@ LV_IMG_DECLARE(menu);
     }
 
     _exit  = lv_imgbtn_create(lv_scr_act(), NULL);
-    lv_imgbtn_set_src(_exit, LV_BTN_STATE_RELEASED, &menu);
-    lv_imgbtn_set_src(_exit, LV_BTN_STATE_PRESSED, &menu);
-    lv_imgbtn_set_src(_exit, LV_BTN_STATE_CHECKED_PRESSED, &menu);
-    lv_imgbtn_set_src(_exit, LV_BTN_STATE_CHECKED_RELEASED, &menu);
-    lv_obj_align(_exit, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, -20, -20);
+    lv_imgbtn_set_src(_exit, LV_BTN_STATE_RELEASED, &iexit);
+    lv_imgbtn_set_src(_exit, LV_BTN_STATE_PRESSED, &iexit);
+    lv_imgbtn_set_src(_exit, LV_BTN_STATE_CHECKED_PRESSED, &iexit);
+    lv_imgbtn_set_src(_exit, LV_BTN_STATE_CHECKED_RELEASED, &iexit);
+    lv_obj_align(_exit, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 10, -10);
     lv_obj_set_event_cb(_exit, event_cb);
     lv_obj_set_top(_exit, true);
 }
