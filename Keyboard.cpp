@@ -1,19 +1,5 @@
 #include "Keyboard.h"
 
-Keyboard::Keyboard()
-{
-    _kbCont = nullptr;
-}
-
-Keyboard::~Keyboard()
-{
-    if (_kbCont)
-    {
-        lv_obj_del(_kbCont);
-    }
-    _kbCont = nullptr;
-}
-
 void Keyboard::create(lv_obj_t* parent)
 {
     static lv_style_t kbStyle;
@@ -31,24 +17,24 @@ void Keyboard::create(lv_obj_t* parent)
         parent = lv_scr_act();
     }
 
-    _kbCont = lv_cont_create(parent, NULL);
-    lv_obj_set_size(_kbCont, LV_HOR_RES, LV_VER_RES - 30);
-    lv_obj_align(_kbCont, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_add_style(_kbCont, LV_OBJ_PART_MAIN, &kbStyle);
+    _content = lv_cont_create(parent, NULL);
+    lv_obj_set_size(_content, LV_HOR_RES, LV_VER_RES - 30);
+    lv_obj_align(_content, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_add_style(_content, LV_OBJ_PART_MAIN, &kbStyle);
 
-    lv_obj_t *ta = lv_textarea_create(_kbCont, NULL);
+    lv_obj_t *ta = lv_textarea_create(_content, NULL);
     lv_obj_set_height(ta, 40);
     lv_textarea_set_one_line(ta, true);
     lv_textarea_set_pwd_mode(ta, false);
     lv_textarea_set_text(ta, "");
 
-    lv_obj_align(ta, _kbCont, LV_ALIGN_IN_TOP_MID, 10, 10);
+    lv_obj_align(ta, _content, LV_ALIGN_IN_TOP_MID, 10, 10);
 
-    lv_obj_t *kb = lv_keyboard_create(_kbCont, NULL);
+    lv_obj_t *kb = lv_keyboard_create(_content, NULL);
     lv_keyboard_set_map(kb, LV_KEYBOARD_MODE_TEXT_LOWER, btnm_mapplus[0]);
     lv_obj_set_height(kb, LV_VER_RES / 3 * 2);
     lv_obj_set_width(kb, 240);
-    lv_obj_align(kb, _kbCont, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+    lv_obj_align(kb, _content, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
     lv_keyboard_set_textarea(kb, ta);
 
     lv_obj_add_style(kb, LV_OBJ_PART_MAIN, &kbStyle);
@@ -57,11 +43,6 @@ void Keyboard::create(lv_obj_t* parent)
     lv_obj_set_event_cb(kb, __eventCallback);
 
     _kb = this;
-}
-
-void Keyboard::align(const lv_obj_t* base, lv_align_t align, lv_coord_t x, lv_coord_t y)
-{
-    lv_obj_align(_kbCont, base, align, x, y);
 }
 
 void Keyboard::__eventCallback(lv_obj_t* kb, lv_event_t event)
@@ -115,9 +96,4 @@ void Keyboard::setKeyboardEvent(kb_event_cb callback)
 const char* Keyboard::getText()
 {
     return (const char *)__buf;
-}
-
-void Keyboard::hidden(bool en)
-{
-    lv_obj_set_hidden(_kbCont, en);
 }

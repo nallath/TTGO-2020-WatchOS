@@ -2,8 +2,9 @@
 #define __KEYBOARD_H
 
 #include "config.h"
+#include "GUIObject.h"
 
-class Keyboard
+class Keyboard: public GUIObject
 {
 public:
     typedef enum
@@ -14,19 +15,11 @@ public:
 
     typedef void (*kb_event_cb)(kb_event_t event);
 
-    Keyboard();
-
-    ~Keyboard();
-
-    void create(lv_obj_t* parent = nullptr);
-
-    void align(const lv_obj_t* base, lv_align_t align, lv_coord_t x = 0, lv_coord_t y = 0);
+    void create(lv_obj_t* parent = nullptr) override;
 
     void setKeyboardEvent(kb_event_cb cb);
 
     const char* getText();
-
-    void hidden(bool en = true);
 
 private:
     lv_obj_t* _kbCont = nullptr;
