@@ -24,6 +24,7 @@ Created by Lewis he on October 10, 2019.
 #include "List.h"
 #include "Keyboard.h"
 #include "Switch.h"
+#include "Task.h"
 
 #define RTC_TIME_ZONE   "CST+7"
 
@@ -403,37 +404,7 @@ private:
 
 List *List::_list = nullptr;
 
-/*****************************************************************
- *
- *          ! Task Class
- *
- */
-class Task
-{
-public:
-    Task()
-    {
-        _handler = nullptr;
-        _cb = nullptr;
-    }
-    ~Task()
-    {
-        if ( _handler == nullptr)return;
-        Serial.println("Free Task Func");
-        lv_task_del(_handler);
-        _handler = nullptr;
-        _cb = nullptr;
-    }
 
-    void create(lv_task_cb_t cb, uint32_t period = 1000, lv_task_prio_t prio = LV_TASK_PRIO_LOW)
-    {
-        _handler = lv_task_create(cb,  period,  prio, NULL);
-    };
-
-private:
-    lv_task_t *_handler = nullptr;
-    lv_task_cb_t _cb = nullptr;
-};
 
 
 /*****************************************************************
