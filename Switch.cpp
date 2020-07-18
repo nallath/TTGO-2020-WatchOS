@@ -1,7 +1,5 @@
 #include "Switch.h"
 
-Switch *Switch::_switch = nullptr;
-
 void Switch::create(lv_obj_t* parent)
 {
     // TODO: ensure that a single switch can also be created.
@@ -54,7 +52,8 @@ void Switch::create(switch_cfg_t* cfg, uint8_t count, exit_cb cb, lv_obj_t* pare
         lv_obj_set_click(_sw[i], true);
 
         lv_obj_align(_sw[i], la1, LV_ALIGN_OUT_RIGHT_MID, 80, 0);
-        lv_obj_set_event_cb(_sw[i], __switch_event_cb);
+        lv_obj_set_event_cb(_sw[i], __eventCallback);
+        bindEventCallback(_sw[i], &Switch::eventCallback);
         prev = la1;
     }
 
@@ -67,20 +66,21 @@ void Switch::create(switch_cfg_t* cfg, uint8_t count, exit_cb cb, lv_obj_t* pare
     lv_obj_set_click(_exitBtn, true);
 
     lv_obj_align(_exitBtn, _content, LV_ALIGN_IN_BOTTOM_LEFT, 10, -10);
-    lv_obj_set_event_cb(_exitBtn, __switch_event_cb);
 
-    _switch = this;
+    lv_obj_set_event_cb(_exitBtn, __eventCallback);
+    bindEventCallback(_exitBtn, &Switch::eventCallback);
+
 }
 
-void Switch::__switch_event_cb(lv_obj_t *obj, lv_event_t event)
+void Switch::eventCallback(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_SHORT_CLICKED) {
         Serial.println("LV_EVENT_SHORT_CLICKED");
-        if (obj == _switch->_exitBtn)
+        if (obj == this->_exitBtn)
         {
-            if (_switch->_exit_cb != nullptr)
+            if (this->_exit_cb != nullptr)
             {
-                _switch->_exit_cb();
+                this->_exit_cb();
                 return;
             }
         }
@@ -89,9 +89,9 @@ void Switch::__switch_event_cb(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_SHORT_CLICKED)
      {
         Serial.println("LV_EVENT_VALUE_CHANGED");
-        for (int i = 0; i < _switch->_count ; i++)
+        for (int i = 0; i < this->_count ; i++)
         {
-            lv_obj_t* sw = _switch->_sw[i];
+            lv_obj_t* sw = this->_sw[i];
             if (obj == sw)
             {
                 const void* src =  lv_imgbtn_get_src(sw, LV_BTN_STATE_RELEASED);
@@ -102,9 +102,9 @@ void Switch::__switch_event_cb(lv_obj_t *obj, lv_event_t event)
                 lv_imgbtn_set_src(sw, LV_BTN_STATE_PRESSED, dst);
                 lv_imgbtn_set_src(sw, LV_BTN_STATE_CHECKED_RELEASED, dst);
                 lv_imgbtn_set_src(sw, LV_BTN_STATE_CHECKED_PRESSED, dst);
-                if (_switch->_cfg[i].cb != nullptr)
+                if (this->_cfg[i].cb != nullptr)
                 {
-                    _switch->_cfg[i].cb(i, en);
+                    this->_cfg[i].cb(i, en);
                 }
                 return;
             }

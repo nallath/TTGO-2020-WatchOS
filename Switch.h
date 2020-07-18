@@ -22,10 +22,9 @@ public:
     void create(lv_obj_t* parent = nullptr);
     void setStatus(uint8_t index, bool en);
 
+protected:
+    void eventCallback(lv_obj_t* kb, lv_event_t event);
 private:
-    static void __switch_event_cb(lv_obj_t *obj, lv_event_t event);
-    static Switch* _switch;
-
     uint8_t _count;
     lv_obj_t** _sw = nullptr;
     switch_cfg_t* _cfg = nullptr;
