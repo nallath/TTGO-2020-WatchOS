@@ -5,61 +5,61 @@ const char *Keyboard::btnm_mapplus[10][23] = {
         "a", "b", "c",   "\n",
         "d", "e", "f",   "\n",
         "g", "h", "i",   "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "j", "k", "l", "\n",
         "n", "m", "o",  "\n",
         "p", "q", "r",  "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "s", "t", "u",   "\n",
         "v", "w", "x", "\n",
         "y", "z", " ", "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "A", "B", "C",  "\n",
         "D", "E", "F",   "\n",
         "G", "H", "I",  "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "J", "K", "L", "\n",
         "N", "M", "O",  "\n",
         "P", "Q", "R", "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "S", "T", "U",   "\n",
         "V", "W", "X",   "\n",
         "Y", "Z", " ", "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "1", "2", "3",  "\n",
         "4", "5", "6",  "\n",
         "7", "8", "9",  "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "0", "+", "-",  "\n",
         "/", "*", "=",  "\n",
         "!", "?", "#",  "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "<", ">", "@",  "\n",
         "%", "$", "(",  "\n",
         ")", "{", "}",  "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     },
     {
         "[", "]", ";",  "\n",
         "\"", "'", ".", "\n",
         ",", ":",  " ", "\n",
-        LV_SYMBOL_OK, "Del", "Exit", LV_SYMBOL_RIGHT, ""
+        LV_SYMBOL_LEFT, "Del", LV_SYMBOL_OK, LV_SYMBOL_RIGHT, ""
     }
 };
 
@@ -140,6 +140,11 @@ void Keyboard::__eventCallback(lv_obj_t* kb, lv_event_t event)
     } else if (strcmp(txt, LV_SYMBOL_RIGHT) == 0)
     {
         index = index + 1 >= sizeof(btnm_mapplus) / sizeof(btnm_mapplus[0]) ? 0 : index + 1;
+        lv_keyboard_set_map(kb, LV_KEYBOARD_MODE_TEXT_LOWER, btnm_mapplus[index]);
+        return;
+    } else if (strcmp(txt, LV_SYMBOL_LEFT) == 0)
+    {
+        index = index - 1 >= 0 ? index - 1 : sizeof(btnm_mapplus) / sizeof(btnm_mapplus[0]) - 1;
         lv_keyboard_set_map(kb, LV_KEYBOARD_MODE_TEXT_LOWER, btnm_mapplus[index]);
         return;
     } else if (strcmp(txt, "Del") == 0)
