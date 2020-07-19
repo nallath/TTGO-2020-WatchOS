@@ -47,7 +47,7 @@ LV_IMG_DECLARE(light);
 LV_IMG_DECLARE(bluetooth);
 LV_IMG_DECLARE(sd);
 LV_IMG_DECLARE(setting);
-
+LV_IMG_DECLARE(menu);
 
 LV_IMG_DECLARE(level1);
 LV_IMG_DECLARE(level2);
@@ -72,22 +72,15 @@ static void updateTime();
 static void view_event_handler(lv_obj_t *obj, lv_event_t event);
 
 static void wifi_event_cb();
-static void sd_event_cb();
 static void setting_event_cb();
-static void light_event_cb();
-static void modules_event_cb();
-static void camera_event_cb();
 static void wifi_destory();
 
 
-MenuBar::lv_menu_config_t _cfg[7] = {
+MenuBar::lv_menu_config_t _cfg[3] = 
+{
     {.name = "WiFi",  .img = (void *) &wifi, .event_cb = wifi_event_cb},
     {.name = "Bluetooth",  .img = (void *) &bluetooth, /*.event_cb = bluetooth_event_cb*/},
-    {.name = "SD Card",  .img = (void *) &sd,  /*.event_cb =sd_event_cb*/},
-    {.name = "Light",  .img = (void *) &light, /*.event_cb = light_event_cb*/},
     {.name = "Setting",  .img = (void *) &setting, /*.event_cb = setting_event_cb */},
-    {.name = "Modules",  .img = (void *) &modules, /*.event_cb = modules_event_cb */},
-    {.name = "Camera",  .img = (void *) &CAMERA_PNG, /*.event_cb = camera_event_cb*/ }
 };
 
 MenuBar menuBar;
@@ -176,11 +169,11 @@ void setupGui()
 
     menuBtn = lv_imgbtn_create(mainBar, NULL);
 
-    /*lv_imgbtn_set_src(menuBtn, LV_BTN_STATE_ACTIVE, &menu);
+    lv_imgbtn_set_src(menuBtn, LV_BTN_STATE_ACTIVE, &menu);
     lv_imgbtn_set_src(menuBtn, LV_BTN_STATE_RELEASED, &menu);
     lv_imgbtn_set_src(menuBtn, LV_BTN_STATE_PRESSED, &menu);
     lv_imgbtn_set_src(menuBtn, LV_BTN_STATE_CHECKED_RELEASED, &menu);
-    lv_imgbtn_set_src(menuBtn, LV_BTN_STATE_CHECKED_PRESSED, &menu);*/
+    lv_imgbtn_set_src(menuBtn, LV_BTN_STATE_CHECKED_PRESSED, &menu);
     lv_obj_add_style(menuBtn, LV_OBJ_PART_MAIN, &style_pr);
 
 
@@ -579,7 +572,10 @@ static lv_obj_t *messagebox1 = nullptr;
 
 static void create_messagebox(const char *txt, lv_event_cb_t event_cb)
 {
-    if (messagebox1 != nullptr)return;
+    if (messagebox1 != nullptr)
+    {
+        return;
+    }
     static const char *btns[] = {"Ok", ""};
     messagebox1 = lv_msgbox_create(lv_scr_act(), NULL);
     lv_msgbox_set_text(messagebox1, txt);
@@ -591,15 +587,18 @@ static void create_messagebox(const char *txt, lv_event_cb_t event_cb)
 
 static void destory_messagebox()
 {
-    if (pl != nullptr) {
+    if (pl != nullptr)
+    {
         delete pl;
         pl = nullptr;
     }
-    if (list != nullptr) {
+    if (list != nullptr)
+    {
         delete list;
         list = nullptr;
     }
-    if (messagebox1 != nullptr) {
+    if (messagebox1 != nullptr)
+    {
         lv_obj_del(messagebox1);
         messagebox1 = nullptr;
     }

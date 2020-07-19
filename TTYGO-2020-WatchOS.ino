@@ -53,20 +53,24 @@ TTGOClass *ttgo;
 void setupNetwork()
 {
     WiFi.mode(WIFI_STA);
-    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info)
+    {
         xEventGroupClearBits(g_event_group, G_EVENT_WIFI_CONNECTED);
     }, WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
 
-    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info)
+    {
         uint8_t data = Q_EVENT_WIFI_SCAN_DONE;
         xQueueSend(g_event_queue_handle, &data, portMAX_DELAY);
     }, WiFiEvent_t::SYSTEM_EVENT_SCAN_DONE);
 
-    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info)
+    {
         xEventGroupSetBits(g_event_group, G_EVENT_WIFI_CONNECTED);
     }, WiFiEvent_t::SYSTEM_EVENT_STA_CONNECTED);
 
-    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info)
+    {
         wifi_connect_status(true);
     }, WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
 }
@@ -75,13 +79,15 @@ void setupNetwork()
 
 void low_energy()
 {
-    if (ttgo->bl->isOn()) {
+    if (ttgo->bl->isOn())
+    {
         xEventGroupSetBits(isr_group, WATCH_FLAG_SLEEP_MODE);
         ttgo->closeBL();
         ttgo->stopLvglTick();
         ttgo->bma->enableStepCountInterrupt(false);
         ttgo->displaySleep();
-        if (!WiFi.isConnected()) {
+        if (!WiFi.isConnected())
+        {
             lenergy = true;
             WiFi.mode(WIFI_OFF);
             // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_2M);
@@ -110,15 +116,14 @@ void setup()
 {
     Serial.begin(115200);
 
-    //Create a program that allows the required message objects and group flags
+    // Create a program that allows the required message objects and group flags
     g_event_queue_handle = xQueueCreate(20, sizeof(uint8_t));
     g_event_group = xEventGroupCreate();
     isr_group = xEventGroupCreate();
 
-
     ttgo = TTGOClass::getWatch();
 
-    //Initialize TWatch
+    // Initialize TWatch
     ttgo->begin();
 
     // Turn on the IRQ used
@@ -132,7 +137,7 @@ void setup()
     ttgo->power->setPowerOutPut(AXP202_LDO3, AXP202_OFF);
     ttgo->power->setPowerOutPut(AXP202_LDO4, AXP202_OFF);
 
-    //Initialize lvgl
+    // Initialize lvgl
     ttgo->lvgl_begin();
 
     // Enable BMA423 interrupt ，
@@ -140,9 +145,10 @@ void setup()
     // you need to set the acceleration parameters, please refer to the BMA423_Accel example
     ttgo->bma->attachInterrupt();
 
-    //Connection interrupted to the specified pin
+    // Connection interrupted to the specified pin
     pinMode(BMA423_INT1, INPUT);
-    attachInterrupt(BMA423_INT1, [] {
+    attachInterrupt(BMA423_INT1, []
+        {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         EventBits_t  bits = xEventGroupGetBitsFromISR(isr_group);
         if (bits & WATCH_FLAG_SLEEP_MODE)
@@ -163,7 +169,8 @@ void setup()
 
     // Connection interrupted to the specified pin
     pinMode(AXP202_INT, INPUT);
-    attachInterrupt(AXP202_INT, [] {
+    attachInterrupt(AXP202_INT, []
+        {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         EventBits_t  bits = xEventGroupGetBitsFromISR(isr_group);
         if (bits & WATCH_FLAG_SLEEP_MODE)
@@ -181,10 +188,10 @@ void setup()
         }
     }, FALLING);
 
-    //Check if the RTC clock matches, if not, use compile time
+    // Check if the RTC clock matches, if not, use compile time
     ttgo->rtc->check();
 
-    //Synchronize time to system time
+    // Synchronize time to system time
     ttgo->rtc->syncToSystem();
 
 #ifdef LILYGO_WATCH_HAS_BUTTON
@@ -196,30 +203,32 @@ void setup()
     */
 
     //Set the user button long press to restart
-    ttgo->button->setLongClickHandler([]() {
-        Serial.println("Pressed Restart Button,Restart now ...");
+    ttgo->button->setLongClickHandler([]()
+    {
+        Serial.println("Pressed Restart Button, restarting...");
         delay(1000);
         esp_restart();
     });
 #endif
 
-    //Setting up the network
+    // Setting up the network
     setupNetwork();
 
-    //Execute your own GUI interface
+    // Execute your own GUI interface
     setupGui();
 
-    //Clear lvgl counter
+    // Clear lvgl counter
     lv_disp_trig_activity(NULL);
 
 #ifdef LILYGO_WATCH_HAS_BUTTON
-    //In lvgl we call the button processing regularly
-    lv_task_create([](lv_task_t *args) {
+    // In lvgl we call the button processing regularly
+    lv_task_create([](lv_task_t *args)
+    {
         ttgo->button->loop();
     }, 30, 1, nullptr);
 #endif
 
-    //When the initialization is complete, turn on the backlight
+    // When the initialization is complete, turn on the backlight
     ttgo->openBL();
 }
 
@@ -229,8 +238,10 @@ void loop()
     uint8_t data;
     //! Fast response wake-up interrupt
     EventBits_t  bits = xEventGroupGetBits(isr_group);
-    if (bits & WATCH_FLAG_SLEEP_EXIT) {
-        if (lenergy) {
+    if (bits & WATCH_FLAG_SLEEP_EXIT)
+    {
+        if (lenergy)
+        {
             lenergy = false;
             // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_160M);
             setCpuFrequencyMhz(160);
@@ -238,13 +249,15 @@ void loop()
 
         low_energy();
 
-        if (bits & WATCH_FLAG_BMA_IRQ) {
+        if (bits & WATCH_FLAG_BMA_IRQ)
+        {
             do {
                 rlst =  ttgo->bma->readInterrupt();
             } while (!rlst);
             xEventGroupClearBits(isr_group, WATCH_FLAG_BMA_IRQ);
         }
-        if (bits & WATCH_FLAG_AXP_IRQ) {
+        if (bits & WATCH_FLAG_AXP_IRQ)
+        {
             ttgo->power->readIRQ();
             ttgo->power->clearIRQ();
             //TODO: Only accept axp power pek key short press
@@ -253,7 +266,8 @@ void loop()
         xEventGroupClearBits(isr_group, WATCH_FLAG_SLEEP_EXIT);
         xEventGroupClearBits(isr_group, WATCH_FLAG_SLEEP_MODE);
     }
-    if ((bits & WATCH_FLAG_SLEEP_MODE)) {
+    if ((bits & WATCH_FLAG_SLEEP_MODE))
+    {
         //! No event processing after entering the information screen
         return;
     }
@@ -267,29 +281,35 @@ void loop()
             } while (!rlst);
 
             //! setp counter
-            if (ttgo->bma->isStepCounter()) {
+            if (ttgo->bma->isStepCounter())
+            {
                 updateStepCounter(ttgo->bma->getCounter());
             }
             break;
         case Q_EVENT_AXP_INT:
             ttgo->power->readIRQ();
-            if (ttgo->power->isVbusPlugInIRQ()) {
+            if (ttgo->power->isVbusPlugInIRQ())
+            {
                 updateBatteryIcon(LV_ICON_CHARGE);
             }
-            if (ttgo->power->isVbusRemoveIRQ()) {
+            if (ttgo->power->isVbusRemoveIRQ())
+            {
                 updateBatteryIcon(LV_ICON_CALCULATION);
             }
-            if (ttgo->power->isChargingDoneIRQ()) {
+            if (ttgo->power->isChargingDoneIRQ())
+            {
                 updateBatteryIcon(LV_ICON_CALCULATION);
             }
-            if (ttgo->power->isPEKShortPressIRQ()) {
+            if (ttgo->power->isPEKShortPressIRQ())
+            {
                 ttgo->power->clearIRQ();
                 low_energy();
                 return;
             }
             ttgo->power->clearIRQ();
             break;
-        case Q_EVENT_WIFI_SCAN_DONE: {
+        case Q_EVENT_WIFI_SCAN_DONE:
+        {
             int16_t len =  WiFi.scanComplete();
             for (int i = 0; i < len; ++i) {
                 wifi_list_add(WiFi.SSID(i).c_str());
@@ -299,7 +319,6 @@ void loop()
         default:
             break;
         }
-
     }
     if (lv_disp_get_inactive_time(NULL) < DEFAULT_SCREEN_TIMEOUT) {
         lv_task_handler();
